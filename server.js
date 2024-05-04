@@ -14,25 +14,50 @@ app.post('/tarefas', (req, res) => {
   });
 
 
-// Rota para obter todas as tarefas
-app.get('/tarefas/:id', (req, res) => {
-    //res.status(200).json(tarefas);// Lógica para obter uma tarefas do banco de dados pelo seu ID
-});
-
-// Rota para obter uma tarefas específica
+// Rota para obter todas as tarefas 
 app.get('/tarefas', (req, res) => {
     res.status(200).json(tarefas);
     // Lógica para obter e retornar todas as tarefas do banco de dados
 });
 
+// Buscar uma - Obter uma tarefa específica
+app.get('/tarefas/:id', (req, res) => {
+    const { id } = req.params;
+    const t = tarefas.find(t => t.id === parseInt(id));
+    if (t) {
+      res.status(200).json(t);
+    } else {
+      res.status(404).json({ error: 'Tarefa não encontrada!' });
+    }
+  });
+
 // Rota para editar uma tarefa existente
 app.put('/tarefas/:id', (req, res) => {
     // Lógica para editar uma tarefa no banco de dados com base no ID
+
+    const{ id } = req.params;
+    const{tarefa} = req.body;
+    const index = tarefas.findIndex(t => t.id === parseInt(id));
+    if (index !== -1){
+        tarefas[index].tarefa = tarefa;
+        res.status(200).json({message: 'Tarefa atualizada com sucesso! '});
+    } else {
+        res.status(404).json({error: 'Tarefa não encontrada!'});
+    }
 });
 
 // Rota para excluir uma tarefa
 app.delete('/tarefas/:id', (req, res) => {
     // Lógica para excluir uma tarefa do banco de dados com base no ID
+
+    const{id} = req.params;
+    const index = tarefas.findIndex(t => t.id === parseInt(id));
+    if (index !== -1){
+        tarefas.splice(index,1);
+        res.status(200).json({message: ' Tarefa removida com sucesso!'});
+    } else{
+        res.status(404).json({error: 'Tarefa não encontrada! '})
+    }
 });
 // Inicie o servidor Express:
 app.listen(PORT, () => {
